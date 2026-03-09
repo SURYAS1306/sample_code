@@ -111,12 +111,12 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  A[Serialized Payload (byte[])] --> B[MemoryBuffer.wrap(bytes)]
-  B --> C[Fory.deserialize(buffer)]
-  C --> D[RefResolver.tryPreserveRefId]
-  D --> E[TypeResolver.readTypeInfo]
-  E --> F[Serializer.read(buffer)]
-  F --> G[Object Graph]
+  A["Serialized Payload (byte[])"] --> B["MemoryBuffer.wrap(bytes)"]
+  B --> C["Fory.deserialize(buffer)"]
+  C --> D["RefResolver.tryPreserveRefId"]
+  D --> E["TypeResolver.readTypeInfo"]
+  E --> F["Serializer.read(buffer)"]
+  F --> G["Object Graph"]
 ```
 
 **Zero-copy & buffer handling**:
@@ -155,24 +155,24 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  A[Generated Python Dataclass / Union] --> B[_get_fory()\n(ThreadSafeFory)]
-  B --> C[pyfory.Fory.serialize(obj)]
-  C --> D[MapRefResolver.write_ref_or_null]
-  D --> E[TypeResolver.get_type_info + write_type_info]
-  E --> F[Serializer.write(buffer, obj)]
-  F --> G[buffer.to_bytes()\nSerialized Payload]
+  A["Generated Python Dataclass / Union"] --> B["_get_fory()\n(ThreadSafeFory)"]
+  B --> C["pyfory.Fory.serialize(obj)"]
+  C --> D["MapRefResolver.write_ref_or_null"]
+  D --> E["TypeResolver.get_type_info + write_type_info"]
+  E --> F["Serializer.write(buffer, obj)"]
+  F --> G["buffer.to_bytes()\nSerialized Payload"]
 ```
 
 **Deserialization lifecycle (Python)**:
 
 ```mermaid
 flowchart LR
-  A[Serialized Payload (bytes)] --> B[Buffer.wrap(bytes)]
-  B --> C[pyfory.Fory.deserialize(buffer)]
-  C --> D[MapRefResolver.try_preserve_ref_id]
-  D --> E[TypeResolver.read_type_info]
-  E --> F[Serializer.read(buffer)]
-  F --> G[Object Graph]
+  A["Serialized Payload (bytes)"] --> B["Buffer.wrap(bytes)"]
+  B --> C["pyfory.Fory.deserialize(buffer)"]
+  C --> D["MapRefResolver.try_preserve_ref_id"]
+  D --> E["TypeResolver.read_type_info"]
+  E --> F["Serializer.read(buffer)"]
+  F --> G["Object Graph"]
 ```
 
 **Zero-copy & buffer handling**:
@@ -238,17 +238,17 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  A[.fdl/.proto/.fbs] --> B[frontend.*\nparse_idl_file]
-  B --> C[Schema (IR)\n(ir/ast.py)]
-  C --> D[SchemaValidator\n(ir/validator.py)]
-  D --> E[JavaGenerator\n(generators/java.py)]
-  D --> F[PythonGenerator\n(generators/python.py)]
+  A[".fdl/.proto/.fbs"] --> B["frontend.*\nparse_idl_file"]
+  B --> C["Schema (IR)\n(ir/ast.py)"]
+  C --> D["SchemaValidator\n(ir/validator.py)"]
+  D --> E["JavaGenerator\n(generators/java.py)"]
+  D --> F["PythonGenerator\n(generators/python.py)"]
 
-  E --> E1[Models + Fory Registration\n(current)]
-  E --> E2[*Service.java\n*Grpc.java\n(new)]
+  E --> E1["Models + Fory Registration\n(current)"]
+  E --> E2["*Service.java\n*Grpc.java\n(new)"]
 
-  F --> F1[Models + Fory Registration\n(current)]
-  F --> F2[*_service.py\n*_grpc.py\n(new)]
+  F --> F1["Models + Fory Registration\n(current)"]
+  F --> F2["*_service.py\n*_grpc.py\n(new)"]
 ```
 
 **Changes in `generators/java.py`**:
@@ -586,17 +586,17 @@ We will extend `integration_tests` with a new module, e.g. `integration_tests/gr
 
 ```mermaid
 flowchart TD
-  A[IDL Schemas (.fdl)] --> B[compiler/fory_compiler/cli.py\n(foryc)]
-  B --> C[Generated Java Artifacts\nModels + *Service.java + *Grpc.java]
-  B --> D[Generated Python Artifacts\nModels + *_service.py + *_grpc.py]
+  A["IDL Schemas (.fdl)"] --> B["compiler/fory_compiler/cli.py\n(foryc)"]
+  B --> C["Generated Java Artifacts\nModels + *Service.java + *Grpc.java"]
+  B --> D["Generated Python Artifacts\nModels + *_service.py + *_grpc.py"]
 
-  C --> E[Build Java server & client\n(java/fory-core + gRPC)]
-  D --> F[Build Python server & client\n(python/pyfory + grpcio)]
+  C --> E["Build Java server & client\n(java/fory-core + gRPC)"]
+  D --> F["Build Python server & client\n(python/pyfory + grpcio)"]
 
-  E --> G[Integration Tests\nJava server ↔ Python client]
-  F --> H[Integration Tests\nPython server ↔ Java client]
+  E --> G["Integration Tests\nJava server ↔ Python client"]
+  F --> H["Integration Tests\nPython server ↔ Java client"]
 
-  G --> I[CI Pass/Fail]
+  G --> I["CI Pass/Fail"]
   H --> I
 ```
 
