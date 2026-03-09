@@ -2,6 +2,21 @@
 
 This repository contains architecture and design documents for adding **gRPC support to Apache Fory** across Java and Python runtimes.
 
+## Overview
+
+The design explores how Apache Fory's serialization system can integrate with gRPC while preserving cross-language compatibility and high performance.
+
+## High-Level Architecture
+
+```mermaid
+flowchart LR
+IDL --> Compiler
+Compiler --> GeneratedCode
+GeneratedCode --> ForyCodec
+ForyCodec --> gRPC
+gRPC --> Network
+```
+
 ## Documents
 
 ### 1. Fory Java & Python gRPC Integration Design
