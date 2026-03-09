@@ -99,12 +99,12 @@ With requirements:
 
 ```mermaid
 flowchart LR
-  A[User / Generated Java Model] --> B[ThreadSafeFory\n(from XxxForyRegistration)]
-  B --> C[Fory.serialize(obj)]
-  C --> D[RefResolver.writeRefOrNull]
-  D --> E[TypeResolver.getTypeInfo + writeTypeInfo]
-  E --> F[Serializer.write(buffer, obj)]
-  F --> G[MemoryBuffer.toByteArray()\nSerialized Payload]
+  A["User / Generated Java Model"] --> B["ThreadSafeFory\n(from XxxForyRegistration)"]
+  B --> C["Fory.serialize(obj)"]
+  C --> D["RefResolver.writeRefOrNull"]
+  D --> E["TypeResolver.getTypeInfo + writeTypeInfo"]
+  E --> F["Serializer.write(buffer, obj)"]
+  F --> G["MemoryBuffer.toByteArray()\nSerialized Payload"]
 ```
 
 **Deserialization lifecycle (Java)**:
