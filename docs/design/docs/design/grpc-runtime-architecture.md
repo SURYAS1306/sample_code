@@ -17,10 +17,10 @@ We focus on request lifecycle, stub interactions, serialization triggers, memory
 
 ```mermaid
 flowchart LR
-  A[Client Stub] --> B[Request Serializer\n(Codec/Marshaller)]
-  B --> C[gRPC Transport\nHTTP/2 Frames]
-  C --> D[Server Deserializer\n(Codec/Marshaller)]
-  D --> E[Service Handler\n(User Implementation)]
+  A[Client Stub] --> B[Request Serializer]
+  B --> C[gRPC Transport]
+  C --> D[Server Deserializer]
+  D --> E[Service Handler]
   E --> F[Response Serializer]
   F --> C
 ```
