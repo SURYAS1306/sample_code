@@ -2,7 +2,10 @@
 
 ### Overview
 
-This document explains gRPC’s runtime architecture and how it integrates with serialization frameworks, using **Protobuf** and **FlatBuffers** as concrete reference points. The goal is to inform the design of a Fory-based gRPC integration for Apache Fory, particularly in:
+This document explains gRPC’s runtime architecture and how it integrates with serialization frameworks, using **Protobuf** and **FlatBuffers** as concrete reference points. The goal is to inform the design of a Fory-based gRPC integration for Apache Fory.
+gRPC itself does not mandate a specific serialization format; it only requires a mechanism to convert request and response objects into byte streams for transport over HTTP/2.
+
+This analysis focuses particularly on:
 
 - Java (similar to how Protobuf and FlatBuffers integrate today)
 - Python (`grpcio` with custom serializers)
@@ -79,6 +82,8 @@ This pattern is analogous to how Fory can **wrap a `MemoryBuffer` or `CBuffer`**
 ---
 
 ### 2. Generated Stubs and gRPC Runtime
+
+In gRPC, service stubs and service base classes are generated from an IDL definition. These generated components provide the user-facing API while delegating transport and serialization concerns to the underlying gRPC runtime.
 
 #### 2.1 Generated artifacts structure
 
@@ -163,6 +168,7 @@ This pattern is analogous to how Fory can **wrap a `MemoryBuffer` or `CBuffer`**
 ---
 
 ### 5. Streaming RPC Behavior
+Streaming RPCs rely on HTTP/2 flow control and backpressure mechanisms provided by the gRPC runtime, ensuring that message production does not overwhelm the receiver.
 
 #### 5.1 Unary
 
@@ -272,6 +278,8 @@ class ForyCodec:
 ```
 
 This is analogous to how Protobuf’s Python integration uses `message.SerializeToString()` and `cls.FromString()`.
+
+Errors during serialization or deserialization must propagate through the gRPC error model. In practice, codec failures should be translated into appropriate gRPC `Status` responses (for example `Status.INTERNAL` or `Status.INVALID_ARGUMENT`).
 
 ---
 
