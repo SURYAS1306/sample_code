@@ -2,7 +2,8 @@
 
 ### Overview
 
-This document proposes an end-to-end design for adding **Java and Python gRPC integration** to Apache Fory using only Fory’s serialization formats (no protobuf payloads). The design is based on:
+This document proposes an end-to-end design for adding **Java and Python gRPC integration** to Apache Fory using only Fory’s serialization formats (no protobuf payloads).The gRPC transport layer (HTTP/2, service routing, streaming semantics) remains unchanged; only the message serialization layer is replaced with Fory instead of protobuf.
+The design is based on:
 
 - The existing **compiler pipeline** in `compiler/fory_compiler/**`
 - The **Java runtime** in `java/fory-core/**` (plus `fory-format` as needed)
@@ -96,6 +97,7 @@ With requirements:
   - Varint encoding, string encoding, bit operations, buffer pooling
 
 **Serialization lifecycle (Java)**:
+Generated code typically uses a `ThreadSafeFory` instance (from `XxxForyRegistration`) to ensure thread-safe serialization contexts when used inside multi-threaded RPC servers.
 
 ```mermaid
 flowchart LR
@@ -197,6 +199,8 @@ flowchart LR
   - Based on **same IR** (`compiler/fory_compiler/ir/ast.py`)
   - Uses **same type IDs and schema options** from FDL/FDL-compatible inputs
 - Integration tests in `integration_tests/idl_tests/**` already verify cross-language struct/union round-trips; gRPC tests will layer on top.
+  
+-Compatibility across languages also relies on Fory’s schema evolution rules defined in the cross-language specification, allowing backward-compatible changes such as adding optional fields while preserving wire compatibility.
 
 ---
 
@@ -222,6 +226,7 @@ flowchart LR
   - gRPC client: same `Marshaller` usage and generated stubs
 - Potential new package:
   - `org.apache.fory.grpc` in `java/fory-core` or a new submodule (e.g. `java/fory-grpc`)
+  -To avoid introducing a gRPC dependency into the core serialization runtime, the gRPC integration may be implemented as a separate module (for example `java/fory-grpc`) rather than inside `fory-core`.
 
 **Python runtime side (`/python`)**:
 
@@ -604,6 +609,21 @@ flowchart TD
   - Maven profile in `java/pom.xml` to run gRPC xlang tests.
   - Python `pytest` tests under `integration_tests/grpc_xlang_tests/python`.
   - Combined driver script under `integration_tests/grpc_xlang_tests/run.sh`.
+
+---
+
+
+### Error Handling
+
+Serialization or deserialization failures must be translated into appropriate gRPC status errors.
+
+Typical mappings include:
+
+- Serialization failures → `Status.INTERNAL`
+- Invalid payload format → `Status.INVALID_ARGUMENT`
+- Schema or type mismatch → `Status.FAILED_PRECONDITION`
+
+This ensures that serialization failures propagate through the gRPC error model while preserving observability for clients.
 
 ---
 
