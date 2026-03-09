@@ -355,3 +355,12 @@ Thus, **zero-copy** is mainly achievable **inside** the serialization framework 
 
 This understanding feeds directly into the **Fory gRPC integration design** (Document 1), ensuring the implementation fits gRPC’s architecture 
 while leveraging Fory’s existing serialization and zero-copy capabilities.
+
+
+flowchart LR
+  A[User / Generated Java Model] --> B[ThreadSafeFory\n(from XxxForyRegistration)]
+  B --> C[Fory.serialize(obj)]
+  C --> D[RefResolver.writeRefOrNull]
+  D --> E[TypeResolver.getTypeInfo + writeTypeInfo]
+  E --> F[Serializer.write(buffer, obj)]
+  F --> G[MemoryBuffer.toByteArray()\nSerialized Payload]
